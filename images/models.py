@@ -36,5 +36,5 @@ class Images(models.Model):
 # save() method is overridden for user Input
 
     def get_absolute_url(self):
-        return reverse("model_detail", kwargs={"pk": self.pk})
+        return reverse("images:detail", args=[self.id, self.slug])
     

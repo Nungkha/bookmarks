@@ -9,9 +9,11 @@ class ImageCreateForm(forms.ModelForm):
     class Meta:
         model = Images
         fields = ['title', 'url', 'description']
-        widget = {
-            'url' : forms.HiddenInput
+        widgets = {
+            'url' : forms.HiddenInput(),
         }
+
+
 
     def save(self, force_insert=False, force_update=False, commit=True):
         image = super().save(commit=False)
@@ -21,6 +23,7 @@ class ImageCreateForm(forms.ModelForm):
         image_name = f'{name}.{extension}'
         # download image from the given URL
         response = requests.get(image_url)
+        print(response)
         image.image.save(image_name, ContentFile(response.content), save=False)
 
         if commit:
@@ -28,11 +31,12 @@ class ImageCreateForm(forms.ModelForm):
         return image
 
 
-# to check if the object has a valid extensions i.e. (.png, .jpg, .jepg)
+    # to check if the object has a valid extensions i.e. (.png, .jpg, .jepg)
     def clean_url(self):
         url = self.cleaned_data['url']
         valid_extensions = ['jpg','png','jpeg']
         extensions =url.rsplit('.', 1)[1].lower()
         if extensions not in valid_extensions:
             raise forms.ValidationError("The given URL does not match valid image extensions.")
+
         return url
